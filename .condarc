@@ -1,0 +1,5 @@
+pkgs_dirs:
+- /mnt/parscratch/users/$USER/anaconda/.pkg-cache/
+
+envs_dirs:
+- /mnt/parscratch/users/$USER/anaconda/.envs
