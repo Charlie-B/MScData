@@ -1,5 +1,6 @@
 #RoBERTa
 
+import os
 import torch
 import pandas as pd
 import numpy as np
@@ -7,8 +8,7 @@ import numpy as np
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 tokenizer = AutoTokenizer.from_pretrained("FacebookAI/roberta-base")
-model = AutoModelForMaskedLM.from_pretrained('roberta-base')
-
+model = AutoModelForMaskedLM.from_pretrained("FacebookAI/roberta-base")
 
 # If there's a GPU available...
 if torch.cuda.is_available():
@@ -25,10 +25,10 @@ else:
     print('No GPU available, using the CPU instead.')
     device = torch.device("cpu")
 
-
 # Load the dataset into a pandas dataframe.
-wd = "C:/wget/"
-read_location = wd + "SentencesShort.csv"
+wd = os.getcwd()
+# wd = "mnt/parscratch/users/$USER/"
+read_location = wd + "/SentencesShort.csv"
 
 input_doc = pd.read_csv(read_location, header=0)
 
@@ -76,15 +76,15 @@ for year in year_list:
     input_ids = torch.cat(input_ids, dim=0)
     attention_masks = torch.cat(attention_masks, dim=0)
 
-    # Run the model!
+    # Run the model
     with torch.no_grad():
         output = model(input_ids, attention_masks, output_hidden_states=True)
 
     hs = output[-1]
     pen_hs = hs[-2]
 
-    hs_loc = wd + "hsShort" + str(year) + ".pt"
-    torch.save(pen_hs,hs_loc)
+    hs_loc = wd + "/hsShort" + str(year) + ".pt"
+    torch.save(pen_hs, hs_loc)
 
     decoded_tokens_list = []
     for i in range(len(sentences)):
@@ -118,5 +118,5 @@ for year in year_list:
         token=('token', 'first')
     )
 
-    av_loc = wd + "avShort" + str(year) + ".csv"
+    av_loc = wd + "/avShort" + str(year) + ".csv"
     averaged_df.to_csv(av_loc)
