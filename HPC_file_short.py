@@ -76,14 +76,14 @@ for year in year_list:
     input_ids = torch.cat(input_ids, dim=0)
     attention_masks = torch.cat(attention_masks, dim=0)
 
-    # Run the model!
+    # Run the model
     with torch.no_grad():
         output = model(input_ids, attention_masks, output_hidden_states=True)
 
     hs = output[-1]
     pen_hs = hs[-2]
 
-    hs_loc = wd + "hsShort" + str(year) + ".pt"
+    hs_loc = wd + "/hsShort" + str(year) + ".pt"
     torch.save(pen_hs, hs_loc)
 
     decoded_tokens_list = []
@@ -118,5 +118,5 @@ for year in year_list:
         token=('token', 'first')
     )
 
-    av_loc = wd + "avShort" + str(year) + ".csv"
+    av_loc = wd + "/avShort" + str(year) + ".csv"
     averaged_df.to_csv(av_loc)
