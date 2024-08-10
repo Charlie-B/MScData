@@ -27,7 +27,7 @@ else:
 
 
 # Load the dataset into a pandas dataframe.
-wd = "C:/wget/"
+wd = "mnt/parscratch/users/$USER/anaconda/.envs/test/"
 read_location = wd + "SentencesShort.csv"
 
 input_doc = pd.read_csv(read_location, header=0)
