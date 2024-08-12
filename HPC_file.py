@@ -4,7 +4,7 @@ import os
 import torch
 import pandas as pd
 import numpy as np
-import datatime as dt
+import datetime as dt
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
@@ -32,9 +32,9 @@ wd = os.getcwd()
 read_location = wd + "/Sentences.csv"
 
 with open(read_location, errors='ignore') as f:
-	input_doc = pd.read_csv(f, header=0)
+    input_doc = pd.read_csv(f, header=0)
 
-year_list = [2024,2014,2004,1994,1984]
+year_list = [2024, 2014, 2004, 1994, 1984]
 
 for year in year_list:
     print("Year: ", year)
@@ -63,9 +63,9 @@ for year in year_list:
 
     for sent in sentences:
         count = count + 1
-	if (count % 1000) == 0
-		now = dt.datetime.now().strftime('%H:%M:%S')
-		print(now, " - ", count)
+        if (count % 1000) == 0:
+            now = dt.datetime.now().strftime('%H:%M:%S')
+            print(now, " - ", count)
 
         encoded_dict = tokenizer.encode_plus(
             sent,  # Sentence to encode.
@@ -96,7 +96,7 @@ for year in year_list:
     pen_hs = hs[-2]
 
     hs_loc = wd + "/hs" + str(year) + ".pt"
-    torch.save(pen_hs,hs_loc)
+    torch.save(pen_hs, hs_loc)
 
     decoded_tokens_list = []
     for i in range(len(sentences)):
