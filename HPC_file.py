@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
+#RoBERTa
 
 import os
 import torch
 import pandas as pd
 import numpy as np
+import datatime as dt
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
@@ -30,11 +31,13 @@ wd = os.getcwd()
 
 read_location = wd + "/Sentences.csv"
 
-input_doc = pd.read_csv(read_location, header=0)
+with open(read_location, errors='ignore') as f:
+	input_doc = pd.read_csv(f, header=0)
 
-year_list = [2024, 2014, 2004, 1994, 1984]
+year_list = [2024,2014,2004,1994,1984]
 
 for year in year_list:
+    print("Year: ", year)
 
     input_doc_filtered = input_doc[input_doc["year"] == year]
     sentences = input_doc_filtered.text.values
@@ -49,14 +52,21 @@ for year in year_list:
         # Update the maximum sentence length.
         max_len = max(max_len, len(input_ids))
 
-    print(max_len)
+    print("Max len: ", max_len)
 
     # Tokenize all of the sentences and map the tokens to their word IDs.
     input_ids = []
     attention_masks = []
 
     # For every sentence...
+    count = 0
+
     for sent in sentences:
+        count = count + 1
+	if (count % 1000) == 0
+		now = dt.datetime.now().strftime('%H:%M:%S')
+		print(now, " - ", count)
+
         encoded_dict = tokenizer.encode_plus(
             sent,  # Sentence to encode.
             add_special_tokens=True,  # Add '[CLS]' and '[SEP]'
@@ -77,6 +87,8 @@ for year in year_list:
     attention_masks = torch.cat(attention_masks, dim=0)
 
     # Run the model!
+    now = dt.datetime.now().strftime('%H:%M:%S')
+    print("Running model at ", now)
     with torch.no_grad():
         output = model(input_ids, attention_masks, output_hidden_states=True)
 
@@ -109,9 +121,9 @@ for year in year_list:
     df_filtered = df_embeddings.loc[df_embeddings.token != '<pad>']
     df_filtered = df_filtered.loc[df_filtered.token != ',']
 
-    df_filtered['token'] = df_filtered['token'].copy().str.replace('Ġ', '', regex=False)
-
     # Find average embedding per token
+    now = dt.datetime.now().strftime('%H:%M:%S')
+    print("Calculating averages at :", now)
     averaged_df = df_filtered.groupby('token').agg(
         count=('token', lambda x: len(x)),
         mean=('embedding', lambda x: np.vstack(x).mean(axis=0).tolist()),
